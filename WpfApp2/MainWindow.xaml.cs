@@ -42,7 +42,7 @@ namespace WpfApp2
             {
                 if (image.Source is BitmapImage bitmapImage)
                 {
-                    string imagePath = bitmapImage.UriSource.LocalPath;
+                    string imagePath = bitmapImage.UriSource.AbsoluteUri;
                     string fileName = System.IO.Path.GetFileName(imagePath);
                     ImageItem imageItem = new ImageItem
                     {
@@ -57,10 +57,10 @@ namespace WpfApp2
 
         private void LoadImagesFromProject()
         {
-            string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-            string imagesFolder = System.IO.Path.Combine(projectPath, "WpfApp2", "Images");
-
-            string[] imageFiles = Directory.GetFiles(imagesFolder).ToArray();
+            // Images are compiled WPF resources; their location does not depend on CWD.
+            string[] imageFiles = Enumerable.Range(1, 9)
+                .Select(index => $"pack://application:,,,/Images/{index}.png")
+                .ToArray();
             var randomFiles = imageFiles.OrderBy(x => Guid.NewGuid()).ToArray();
             foreach (string filePath in randomFiles)
             {
